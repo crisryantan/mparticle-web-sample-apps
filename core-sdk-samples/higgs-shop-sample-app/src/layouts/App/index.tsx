@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-import { useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import mParticle from '@mparticle/web-sdk';
-import sideloadedKit from 'sideloaded-kit-example';
+import RoktWsdkKit from '@mparticle/web-rokt-wsdk-kit';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { NavigationMenu } from '../../components/NavigationMenu';
@@ -18,11 +18,16 @@ import { APIKeyHeaderBar } from '../../components/APIKeyHeaderBar';
 import APIKeyContextProvider from '../../contexts/APIKeyContext';
 import useApiKey from '../../hooks/useAPIKey';
 import { StartShoppingModal } from '../../components/StartShoppingModal';
+// import './kit-config';
 
 // (optional) Use the package version number to keep your appVersion up-to-date
 const { version } = require('../../../package.json');
 
+const MParticleContext = createContext(false);
+export const useMParticleInitialized = () => useContext(MParticleContext);
+
 const App = () => {
+    const [isMParticleInitialized, setIsMParticleInitialized] = useState(false);
     const mParticleConfig: mParticle.MPConfiguration = {
         // (optional) `appName and appVersion are used to associate with your web app
         // and are included in all event uploads
@@ -54,6 +59,7 @@ const App = () => {
                 // proceed with any custom logic that requires a valid, identified user
 
                 const user = result.getUser();
+                console.log('user', user);
                 const { userIdentities } = user.getUserIdentities();
 
                 // For demonstration purposes, we are printing out the known values for a user
@@ -68,6 +74,7 @@ const App = () => {
                         ],
                     );
                 });
+
             } else {
                 // the IDSync call failed
             }
@@ -83,9 +90,8 @@ const App = () => {
         // Please read our docs about sideloaded kits at
         // https://docs.mparticle.com/developers/sdk/web/kits/#sideloaded-kits-custom-kits
         // NOTE: Sideloaded kits are always active.
-        sideloadedKits: [sideloadedKit],
+        sideloadedKits: [RoktWsdkKit],
     };
-
     // In a true production implementation, you should load your mParticle API Key via
     // an environment variable.
     // For example:
@@ -103,6 +109,14 @@ const App = () => {
 
     useEffect(() => {
         if (apiKey) {
+            console.log('RoktWsdkKit', RoktWsdkKit);
+            // RoktWsdkKit.register({
+            //     isDevelopment: false,
+            // });
+            mParticle.ready(() => {
+                console.log("All kits have loaded, including RoktKit");
+                setIsMParticleInitialized(true);
+            });
             mParticle.init(apiKey, mParticleConfig);
         } else {
             console.error('Please add your mParticle API Key');
@@ -112,35 +126,44 @@ const App = () => {
     return (
         <div className='App'>
             <ThemeProvider theme={theme}>
-                <UserDetailsProvider>
-                    <OrderDetailsProvider>
-                        <HashRouter>
-                            <APIKeyContextProvider>
-                                <StartShoppingModal />
+                {/* 4) Provide the isMParticleInitialized value to children */}
+                <MParticleContext.Provider value={isMParticleInitialized}>
+                    <UserDetailsProvider>
+                        <OrderDetailsProvider>
+                            <HashRouter>
+                                <APIKeyContextProvider>
+                                    <StartShoppingModal />
+                                    <APIKeyHeaderBar />
+                                    <NavigationMenu />
 
-                                <APIKeyHeaderBar />
-                                <NavigationMenu />
-                                <Routes>
-                                    <Route path='/' element={<ShopPage />} />
-                                    <Route path='shop' element={<ShopPage />} />
-                                    <Route
-                                        path='about'
-                                        element={<AboutPage />}
-                                    />
-                                    <Route
-                                        path='account'
-                                        element={<AccountPage />}
-                                    />
-                                    <Route path='cart' element={<CartPage />} />
-                                    <Route
-                                        path='/products/:id'
-                                        element={<ProductDetailPage />}
-                                    />
-                                </Routes>
-                            </APIKeyContextProvider>
-                        </HashRouter>
-                    </OrderDetailsProvider>
-                </UserDetailsProvider>
+                                    <Routes>
+                                        <Route path='/' element={<ShopPage />} />
+                                        <Route
+                                            path='shop'
+                                            element={<ShopPage />}
+                                        />
+                                        <Route
+                                            path='about'
+                                            element={<AboutPage />}
+                                        />
+                                        <Route
+                                            path='account'
+                                            element={<AccountPage />}
+                                        />
+                                        <Route
+                                            path='cart'
+                                            element={<CartPage />}
+                                        />
+                                        <Route
+                                            path='/products/:id'
+                                            element={<ProductDetailPage />}
+                                        />
+                                    </Routes>
+                                </APIKeyContextProvider>
+                            </HashRouter>
+                        </OrderDetailsProvider>
+                    </UserDetailsProvider>
+                </MParticleContext.Provider>
             </ThemeProvider>
         </div>
     );

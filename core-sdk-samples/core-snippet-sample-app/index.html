@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+
         <title>mParticle Core Web Snippet Sample App</title>
 
         <!-- Load mParticle Bundle -->
@@ -9,7 +10,7 @@
             window.mParticle = {
                 config: {
                     // If you are doing local development, set this to false
-                    requestConfig: true,
+                    requestConfig: false,
 
                     flags: {},
 
@@ -42,21 +43,26 @@
 
         <button id="js-log-event">Fire Event</button>
 
-        <!-- Disable the following to override the CDN Snippet for local development -->
-        <script src="src/snippet.js"></script>
-
         <!-- Local Development: Enable the following to override the Snippet -->
-        <!-- <script src="node_modules/%40mparticle/web-sdk/dist/mparticle.js"></script>
+        <script src="node_modules/%40mparticle/web-sdk/dist/mparticle.js"></script>
         <script src="src/events.fns.js"></script>
-        <script src="src/sideloadedKits.js"></script>
+        <script src="node_modules/%40mparticle/mparticle-javascript-integration-rokt/dist/RoktWsdk-Kit.iife.js"></script>
+
+        <!-- Disable the following to override the CDN Snippet for local development -->
+        <script src="src/kit-config.js"></script>
+
         <script>
             setTimeout(function () {
                 console.log('init mParticle', window.mParticle.config);
+                window.RoktWsdkKit.register({
+                  isDevelopment: false,
+                });
                 window.mParticle.init(
-                    'REPLACE WITH API KEY',
+                    'us2-ee8e767dee59bd49b1bd894310bfae6e',
                     window.mParticle.config
                 );
+                console.log('window.RoktWsdkKit', window.RoktWsdkKit);
             }, 100);
-        </script> -->
+        </script>
     </body>
 </html>

@@ -17,6 +17,7 @@ import { WrappedTypography } from '../../components/WrappedTypography';
 import { BackButton } from '../../components/BackButton';
 import { ProductVariantSelect } from '../../features/ProductDetails';
 import { useOrderDetails } from '../../contexts/OrderDetails';
+import {useMParticleInitialized} from '../../layouts/App';
 
 const ProductDetailPage: React.FC = () => {
     const classes = {
@@ -29,7 +30,7 @@ const ProductDetailPage: React.FC = () => {
     };
 
     const { id: productId } = useParams();
-
+    const isMParticleInitialized = useMParticleInitialized();
     const [product, setProduct] = useState<Product | null>(null);
     const [color, setColor] = useState('');
     const [size, setSize] = useState('');
@@ -37,6 +38,30 @@ const ProductDetailPage: React.FC = () => {
     const [toastVisible, setToastVisible] = useState(false);
     const [formValid, setFormValid] = useState(false);
     const { addToCart } = useOrderDetails();
+    console.log('isMParticleInitialized', isMParticleInitialized);
+    useEffect(() => {
+        // @ts-ignore
+        console.log('window.Rokt', window.Rokt);
+         // @ts-ignore
+        if (window.Rokt && window.Rokt.currentLauncher) {
+          // @ts-ignore
+          window.Rokt.currentLauncher.selectPlacements({
+            identifier: 'layouts_testrokte2e',
+            attributes: {
+              age: '101',
+              clientType: 'DesktopWeb',
+              country: 'AU',
+              email: 'dd318301-6099-4d65-abbc-ac6a2c6be6cc@gmail.com',
+              locale: 'en-US',
+                'rokt.testsession': 'true',
+              rokte2etest: 'True',
+              userAgent:
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) AppleWebKit/537.36(KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36',
+              zipcode: '2768',
+              },
+          });
+        }
+    }, [isMParticleInitialized]);
 
     // It is recommended to use mParticle.createProduct when using our
     // eCommerce logging functions to generate events so that you can
@@ -256,6 +281,7 @@ const ProductDetailPage: React.FC = () => {
                         </form>
                     </Grid>
                 </Grid>
+                <div id='rokt-placeholder' />
                 <Snackbar
                     autoHideDuration={6000}
                     open={toastVisible}

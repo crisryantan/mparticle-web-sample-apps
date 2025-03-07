@@ -15,6 +15,37 @@
     window.mParticle.Identity = {};
     window.mParticle.config = window.mParticle.config || {};
     window.mParticle.config.rq = [];
+    window.mParticle.config.kitConfigs = [];
+    window.mParticle.config.kitConfigs.push({
+        name: 'RoktWsdk',
+        moduleId: 181,
+        isDebug: true,
+        isVisible: true,
+        isDebugString: 'true',
+        hasDebugString: 'false',
+        settings: {
+          accountId: '2836261467443182542',
+          sandbox: true,
+        },
+        screenNameFilters: [],
+        screenAttributeFilters: [],
+        userIdentityFilters: [],
+        userAttributeFilters: [],
+        eventNameFilters: [],
+        eventTypeFilters: [],
+        attributeFilters: [],
+        githubPath: null,
+        filteringEventAttributeValue: null,
+        filteringUserAttributeValue: null,
+        filteringConsentRuleValues: null,
+        consentRegulationFilters: [],
+        consentRegulationPurposeFilters: [],
+        messageTypeFilters: [],
+        messageTypeStateFilters: [],
+        eventSubscriptionId: 76253,
+        excludeAnonymousUser: false,
+        suffix: null,
+    });
     window.mParticle.config.snippetVersion = 2.3;
     window.mParticle.ready = function (t) {
         window.mParticle.config.rq.push(t);
@@ -83,4 +114,4 @@
         dbUrl;
     var c = document.getElementsByTagName('script')[0];
     c.parentNode.insertBefore(mp, c);
-})('REPLACE WITH API KEY');
+})('us2-ee8e767dee59bd49b1bd894310bfae6e');
