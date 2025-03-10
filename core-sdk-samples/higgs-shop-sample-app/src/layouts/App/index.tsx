@@ -23,11 +23,11 @@ import { StartShoppingModal } from '../../components/StartShoppingModal';
 // (optional) Use the package version number to keep your appVersion up-to-date
 const { version } = require('../../../package.json');
 
-const MParticleContext = createContext(false);
-export const useMParticleInitialized = () => useContext(MParticleContext);
+const RoktContext = createContext(false);
+export const useRoktInitialized = () => useContext(RoktContext);
 
 const App = () => {
-    const [isMParticleInitialized, setIsMParticleInitialized] = useState(false);
+    const [isRoktInitialized, setIsRoktInitialized] = useState(false);
     const mParticleConfig: mParticle.MPConfiguration = {
         // (optional) `appName and appVersion are used to associate with your web app
         // and are included in all event uploads
@@ -74,7 +74,6 @@ const App = () => {
                         ],
                     );
                 });
-
             } else {
                 // the IDSync call failed
             }
@@ -107,6 +106,14 @@ const App = () => {
     // that you use a `useEffect` statement like the example below so that
     // mParticle initializes immediately once your App component is mounted.
 
+    // listen to the rokt-launcher-created event
+    useEffect(() => {
+        window.addEventListener('rokt-launcher-created', () => {
+            setIsRoktInitialized(true);
+            console.log('rokt-launcher-created');
+        });
+    }, []);
+
     useEffect(() => {
         if (apiKey) {
             console.log('RoktWsdkKit', RoktWsdkKit);
@@ -114,8 +121,7 @@ const App = () => {
             //     isDevelopment: false,
             // });
             mParticle.ready(() => {
-                console.log("All kits have loaded, including RoktKit");
-                setIsMParticleInitialized(true);
+                console.log('All kits have loaded, including RoktKit');
             });
             mParticle.init(apiKey, mParticleConfig);
         } else {
@@ -126,8 +132,7 @@ const App = () => {
     return (
         <div className='App'>
             <ThemeProvider theme={theme}>
-                {/* 4) Provide the isMParticleInitialized value to children */}
-                <MParticleContext.Provider value={isMParticleInitialized}>
+                <RoktContext.Provider value={isRoktInitialized}>
                     <UserDetailsProvider>
                         <OrderDetailsProvider>
                             <HashRouter>
@@ -137,7 +142,10 @@ const App = () => {
                                     <NavigationMenu />
 
                                     <Routes>
-                                        <Route path='/' element={<ShopPage />} />
+                                        <Route
+                                            path='/'
+                                            element={<ShopPage />}
+                                        />
                                         <Route
                                             path='shop'
                                             element={<ShopPage />}
@@ -163,7 +171,7 @@ const App = () => {
                             </HashRouter>
                         </OrderDetailsProvider>
                     </UserDetailsProvider>
-                </MParticleContext.Provider>
+                </RoktContext.Provider>
             </ThemeProvider>
         </div>
     );
